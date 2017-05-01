@@ -54,21 +54,28 @@ c = -0.62772 -.42193im
 #   #TODO show image
 # end
 
-function calculate_z_serial(maxiter, z)
+function calculate_z_serial(maxiter, zs, cs)
 ###Calcule output list using JULIASET updating rule
 #TODO Later implementation
-output = zeros(length(z))
+output = zeros(length(zs))
 
-  for i in xrange(z):
+  for i in xrange(length(zs))
     n = 0
-    zs =
+    z = zs[i]
 
-    return output
+    while abs(z) < 2 && n < maxiter
+      z = z*z + cs
+      n += 1
+    end
+
+    output[i] = n
   end
-
+  return output
 end
 
-function calc_pure_julia(draw_output, desired_width, maxiter)
+
+
+function calc_pure_julia(draw_output= false, desired_width = 1000, maxiter = 300)
   ###Create a list of complex coordinates (zs) and complex parameters (cs)
   ###Build a Julia set and display
 
@@ -104,20 +111,20 @@ function calc_pure_julia(draw_output, desired_width, maxiter)
     push!(zs, xcoord + ycoord * im)
   end
 
-  println("Length of x : ", $length(x))
-  println("Total elements:", $length(zs))
+  # println("Length of x : ", "$length(x)")
+  # println("Total elements:", "$length(zs)")
 
   start_time = time_ns()
   output = calculate_z_serial(maxiter, zs, cs)
   end_time = time_ns() #TEST time_ns should return the time in nanoseconds
   secs = (end_time - start_time) / 10^9
-  println("Computations took", $secs, "seconds")
+  #println("Computations took", "$secs", "seconds")
 
    if draw_output
   #   show_greyscale(output, width,height,maxiter)
   #   show_false_greyscale(output, width, height,maxiter)
    end
 
-end
+   println("PORCODDIO")
 
-calc_pure_julia(draw_output=False, desired_width = 1000, maxiter=300)
+end
