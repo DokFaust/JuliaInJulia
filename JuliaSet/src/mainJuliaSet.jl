@@ -94,7 +94,7 @@ function calculate_z_serial(cx, cy; rows = 100, cols = 100, maxiter =10)
         z = z^2 + cx + im*cy
 
         if abs(z) > 4
-          K[i,j] = 1 - exp(-k/10)
+          subspace[i,j] = 1 - exp(-k/10)
           break
         end
 
@@ -102,7 +102,7 @@ function calculate_z_serial(cx, cy; rows = 100, cols = 100, maxiter =10)
 
     end
   end
-  
+
   return subspace
 end
 
@@ -130,32 +130,32 @@ function calc_pure_julia()
 
 
   #Will need after to properly split the screen pixels
-  gw = rand(1:4)
-  gh = gw + div(gw,2)
+  rows = rand(1:4)
+  cols = rows + div(rows,2)
 
   #We want to avoid an eccessive number of computations so we initially
   #Split the screen in more areas than defined
-  rows= diw(w,gh)
-  cols = div(h,gw)
+  gw= div(w,cols)
+  gh = div(h,rows)
 
   #A TESNOR or more properly an array of matrices
   #that will represent the pixels plus the threee
   #RGB channels
 
-  A = zeros(3,w,h)
+  A = zeros(3,h,w)
 
   #We iterate through the number of columns and rows that'll we updated
   #at each iteration of the algorithm
   #See how the (1:gw) notation in julia defines an array
   #so we are basicallyiterating through vectors in 3D, where we have (X,Y,theta)
 
-  for ki = 1:gw
-    for kj = 1:gh
+  for ki = 1:rows
+    for kj = 1:cols
 
       theta = rand() * (2*pi)
 
-      I = (ki-1) * cols + (1:cols) #Notice that those two are arrays,in the next
-      J = (kj - 1) * rows + (1:rows) #cycle we will update whole areas of C-plane
+      I = (ki-1) * gh + (1:gh) #Notice that those two are arrays,in the next
+      J = (kj - 1) * gw + (1:gw) #cycle we will update whole areas of C-plane
 
       #For each channel of the RGB color map
       for i = 1:3
@@ -172,7 +172,7 @@ function calc_pure_julia()
 
         #Finally we update our favorite tensor selceting a precise channel
         #of a 2D subspace
-        A[i,I,J] = calculate_z_serial(cx, cy, rows = rows, cols = cols, maxiter = NUM_MAXITER)
+        A[i,I, J] = calculate_z_serial(cx, cy, rows = gh, cols = gw, maxiter = NUM_MAXITER)
 
       end
     end
@@ -184,8 +184,8 @@ function calc_pure_julia()
   save(file,colorview(RGB,A))
 
   #display the image using a minimal image-view
-  ENV["DISPLAY"] = ":0"
-  run('feh --bg-max --no-fehbg $file ')
+  #ENV["DISPLAY"] = ":0"
+  #run('feh --bg-max --no-fehbg $file ')
 
   # println("Length of x : ", "$length(x)")
   # println("Total elements:", "$length(zs)")
