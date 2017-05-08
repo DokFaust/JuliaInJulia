@@ -1,6 +1,35 @@
-NUM_MAXITER = 10
+#NUM_MAXITER = 10
 
-function pixel_RGB(fracgen)
+module mainJuliaSet
+
+export FractalCanvas, Orbit
+export randcomplex, mandelbrot, draw!, render
+
+@inline function randcomplex(rng::MersenneTwister,maxnorm::Float64=2.0)
+
+    c = Complex(maxnorm * (rand(rng) * 2 - 1), maxnorm * (rand(rng) * 2 - 1))
+
+    while distsqrd(c,zero(Complex)) > maxnorm*maxnorm
+        c = Complex(maxnorm*(rand(rng)*2-1),maxnorm*(rand(rng)*2-1))
+    end
+
+    return c
+
+end
+
+type Pixel
+    x::Int
+    y::Int
+end
+
+type FractalCanvas
+    width::Int
+    height::Int
+    center::Complex
+    zoom::Float64
+    data::Matrix{Float64}
+end
+
 
 
 ###############################################
@@ -55,7 +84,7 @@ function pixel_RGB(fracgen)
 # #   max_value = float(max(output_raw))
 # #   output_raw_limited = [(int(float(o) / max_value * 255) for o in output_raw)]
 # #
-# #   #NOTTODO #create a slightly fancy colour map that shows colour changes with
+# #   #NOTTODO #create a slightly fancy color map that shows color changes with
 # #   #increased contrast
 # #   output_rgb =((o + (256 * o) + (256 ** 2) * o) * 16 for o in output_raw_limited)
 # #   #thanks to somebody on github <3

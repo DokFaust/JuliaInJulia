@@ -8,6 +8,6 @@ export fractal_names, create_fractal
 include("fractal_variations.jl")
 export generate_juliaset
 include("juliaset_generate.jl")
-include("mainJuliaSet.jl")
+include("core_set.jl")
 
 end
